@@ -2,6 +2,7 @@ export type WorkLogItem = {
   id: number
   user_id: number
   description: string
+  llm_Description: string | null
   project: string | null
   date: string
   created_at: string
@@ -15,4 +16,3 @@ export type PaginatedWorkLogs = {
   page: number
   page_size: number
 }
-

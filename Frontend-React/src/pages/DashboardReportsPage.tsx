@@ -11,7 +11,7 @@ const DashboardReportsPage = () => {
   useEffect(() => {
     const accessToken = window.localStorage.getItem('accessToken')
     if (!accessToken) {
-      setError('Не найден access token авторизации')
+      setError('Не найден access token')
       return
     }
 
@@ -56,15 +56,15 @@ const DashboardReportsPage = () => {
       <div className="dashboard-main-card-header">
         <p className="dashboard-main-card-subtitle">Отчёты</p>
         <h2 className="dashboard-main-card-title">
-          Список выполненных тасок по таймтрекеру
+          Готовые отчёты по закрытым задачам
         </h2>
         <p className="dashboard-main-card-text">
-          Здесь отображаются ваши рабочие записи (worklogs) со статусом
+          Здесь отображаются ваши рабочие логы (worklogs) со статусом
           &quot;done&quot;.
         </p>
       </div>
 
-      {loading && <p>Загружаем отчёты...</p>}
+      {loading && <p>Загружаем ваши отчёты...</p>}
       {error && !loading && <p className="dashboard-error-text">{error}</p>}
 
       {!loading && !error && items.length === 0 && (
@@ -76,12 +76,20 @@ const DashboardReportsPage = () => {
           {items.map((item) => (
             <li key={item.id}>
               <div className="dashboard-list-title">
-                <span>{item.project || 'Без проекта'}</span>
+                <span>{item.project || "Без проекта"}</span>
                 <span className="dashboard-list-date">
                   {new Date(item.date).toLocaleDateString()}
                 </span>
               </div>
-              <p className="dashboard-list-description">{item.description}</p>
+              <div className="dashboard-list-description">
+                <strong>Описание:</strong> {item.description}
+                {item.llm_Description && (
+                  <>
+                    <br />
+                    <strong>LLM описание:</strong> {item.llm_Description}
+                  </>
+                )}
+              </div>
               <span className="dashboard-list-status dashboard-list-status--success">
                 {item.status}
               </span>
@@ -94,4 +102,3 @@ const DashboardReportsPage = () => {
 }
 
 export default DashboardReportsPage
-
