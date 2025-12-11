@@ -26,10 +26,9 @@ def create_worklog(payload: WorkLogCreate, db: Session = Depends(get_db)):
             raise HTTPException(status_code=422, detail="Invalid date format, expected YYYY-MM-DD")
 
     description = data.get("description")
-    llm_description = data.get("llm_Description")
-
-    if description and not llm_description:
+    if description:
         data["llm_Description"] = beautify_worklog_description(description)
+        print(data["llm_Description"])
 
     worklog = WorkLog(**data)
     db.add(worklog)

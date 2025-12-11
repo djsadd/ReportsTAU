@@ -9,7 +9,7 @@ class WorkLog(BaseModel):
     id: int
     user_id: int
     description: str
-    llm_Description: Optional[str] = None
+    llm_Description: str
     project: Optional[str] = None
     date: date
     created_at: datetime
@@ -20,7 +20,6 @@ class WorkLog(BaseModel):
 class WorkLogCreate(BaseModel):
     user_id: int
     description: str
-    llm_Description: Optional[str] = None
     project: Optional[str] = None
     # Дата в формате ISO (YYYY-MM-DD), если не указана
     date: Optional[str] = None
