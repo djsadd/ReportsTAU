@@ -1,0 +1,101 @@
+services:
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: reports_postgres
+    environment:
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  api-gateway:
+    build:
+      context: ./ApiGatewayService
+    container_name: reports_api_gateway
+    depends_on:
+      user-service:
+        condition: service_started
+    environment:
+      - USER_SERVICE_URL=http://user-service:8000/users
+      - REPORT_SERVICE_URL=http://report-service:8000
+      - WORKLOG_SERVICE_URL=http://worklog-service:8000/worklogs
+      - FRONTEND_ORIGINS=http://127.0.0.1
+    ports:
+      - "8000:8000"
+    command: ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+
+  user-service:
+    build:
+      context: ./UserService
+    container_name: reports_user_service
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      - JWT_SECRET=${JWT_SECRET}
+      - TELEGRAM_API_BOT=${TELEGRAM_API_BOT}
+      - DATABASE_URL=postgresql+psycopg2://${DB_USER}:${DB_PASSWORD}@postgres:5432/${DB_NAME}
+      - PYTHONPATH=/app
+    ports:
+      - "8001:8000"
+    command: ["sh", "-c", "alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port 8000"]
+
+  worklog-service:
+    build:
+      context: ./WorkLogService
+    container_name: reports_worklog_service
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      - DATABASE_URL=postgresql+psycopg2://${DB_USER}:${DB_PASSWORD}@postgres:5432/${DB_NAME}
+      - FRONTEND_ORIGINS=http://127.0.0.1
+      - JWT_SECRET=${JWT_SECRET}
+      - PYTHONPATH=/app
+    ports:
+      - "8003:8000"
+    command: ["sh", "-c", "alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port 8000"]
+
+  telegram-bot-service:
+    build:
+      context: ./TelegramBotService
+    container_name: reports_telegram_bot
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      - TELEGRAM_API_BOT=${TELEGRAM_API_BOT}
+      - USER_SERVICE_URL=http://user-service:8000/users/
+      - WORKLOG_SERVICE_URL=http://worklog-service:8000/worklogs/
+      - PYTHONPATH=/app
+    ports:
+      - "8002:8000"
+    command: ["python", "-m", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+
+  frontend:
+    build:
+      context: ./Frontend-React
+      args:
+        - VITE_TELEGRAM_LOGIN=${VITE_TELEGRAM_LOGIN}
+        - VITE_USER_SERVICE_URL=${VITE_USER_SERVICE_URL}
+    container_name: reports_frontend
+    depends_on:
+      api-gateway:
+        condition: service_started
+    environment:
+      - VITE_TELEGRAM_LOGIN=${VITE_TELEGRAM_LOGIN}
+      - VITE_USER_SERVICE_URL=${VITE_USER_SERVICE_URL}
+    ports:
+      - "80:80"
+
+volumes:
+  postgres_data:
