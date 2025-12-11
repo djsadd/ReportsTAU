@@ -4,7 +4,6 @@ export type TelegramWidgetSize = 'large' | 'medium'
 
 export interface TelegramWidgetOptions {
   login: string
-  callback: string
   widgetKey: number
   size?: TelegramWidgetSize
   userpic?: 'true' | 'false'
@@ -13,7 +12,6 @@ export interface TelegramWidgetOptions {
 
 export function useTelegramWidget({
   login,
-  callback,
   widgetKey,
   size = 'large',
   userpic = 'false',
@@ -24,7 +22,7 @@ export function useTelegramWidget({
 
   useEffect(() => {
     const container = widgetRef.current
-    if (!container || !login || !callback) {
+    if (!container || !login) {
       setReady(false)
       return
     }
@@ -38,15 +36,29 @@ export function useTelegramWidget({
     script.setAttribute('data-size', size)
     script.setAttribute('data-userpic', userpic)
     script.setAttribute('data-radius', String(radius))
-    script.setAttribute('data-onauth', 'onTelegramAuth')
-    script.setAttribute('data-auth-url', callback)
+    script.setAttribute('data-onauth', 'onTelegramAuth(user)')
+
+    script.onload = () => {
+      console.log(
+        '[Telegram] Widget script loaded for login:',
+        login,
+      )
+    }
+
+    script.onerror = () => {
+      console.error(
+        '[Telegram] Failed to load widget script for login:',
+        login,
+      )
+    }
+
     container.appendChild(script)
     setReady(true)
 
     return () => {
       container.innerHTML = ''
     }
-  }, [login, callback, widgetKey, size, userpic, radius])
+  }, [login, widgetKey, size, userpic, radius])
 
   return { widgetRef, ready }
 }
