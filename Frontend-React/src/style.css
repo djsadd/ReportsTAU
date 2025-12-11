@@ -538,6 +538,112 @@ code {
   color: #374151;
 }
 
+.dashboard-filters {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.dashboard-filters-row {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.dashboard-filters-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 160px;
+  flex: 1 1 0;
+}
+
+.dashboard-filters-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #9ca3af;
+}
+
+.dashboard-filters-input {
+  padding: 0.5rem 0.75rem;
+  border-radius: 999px;
+  border: 1px solid #e5e7eb;
+  font-size: 0.85rem;
+  outline: none;
+  background: #f9fafb;
+}
+
+.dashboard-filters-input:focus {
+  border-color: #7c2d12;
+  box-shadow: 0 0 0 2px rgba(124, 45, 18, 0.12);
+  background: #ffffff;
+}
+
+.dashboard-filters-actions {
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-start;
+}
+
+.dashboard-filters-apply {
+  border-radius: 999px;
+  border: none;
+  padding: 0.55rem 1.3rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  background: #7c2d12;
+  color: #ffffff;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.dashboard-filters-apply:disabled {
+  opacity: 0.7;
+  cursor: default;
+}
+
+.dashboard-filters-apply:not(:disabled):hover {
+  background: #5b1a0a;
+}
+
+.dashboard-pagination {
+  margin-top: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  font-size: 0.85rem;
+  color: #6b7280;
+}
+
+.dashboard-pagination-button {
+  border-radius: 999px;
+  border: 1px solid #e5e7eb;
+  padding: 0.35rem 0.9rem;
+  font-size: 0.8rem;
+  background: #ffffff;
+  color: #374151;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.dashboard-pagination-button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.dashboard-pagination-button:not(:disabled):hover {
+  background: #f3f4f6;
+  border-color: #d1d5db;
+}
+
+.dashboard-pagination-info {
+  min-width: 120px;
+  text-align: center;
+}
+
 @media (max-width: 768px) {
   .dashboard-header {
     padding: 0 1rem;
