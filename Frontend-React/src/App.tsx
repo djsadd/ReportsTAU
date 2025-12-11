@@ -12,7 +12,6 @@ import type { TelegramAuthPayload, UserDetails } from './types/user'
 
 const App = () => {
   const [user, setUser] = useState<UserDetails | null>(null)
-  const [widgetKey, setWidgetKey] = useState(0)
   const [manualId, setManualId] = useState('')
   const [manualMessage, setManualMessage] = useState<string | null>(null)
   const [manualLoading, setManualLoading] = useState(false)
@@ -96,6 +95,17 @@ const App = () => {
     }
   }, [accessToken, refreshTokenValue])
 
+  const handleTelegramAuthFromButton = async (
+    payload: TelegramAuthPayload,
+  ) => {
+    const handler = window.onTelegramAuth
+    if (typeof handler === 'function') {
+      await handler(payload)
+    } else {
+      console.warn('[Telegram] onTelegramAuth handler is not registered yet')
+    }
+  }
+
   const handleLoginById = async () => {
     const trimmedId = manualId.trim()
     if (!trimmedId) {
@@ -125,7 +135,6 @@ const App = () => {
       window.localStorage.setItem('refreshToken', newRefreshToken)
       window.localStorage.setItem('user', JSON.stringify(loggedInUser))
       setManualId('')
-      setWidgetKey((key) => key + 1)
     } catch (error) {
       const message =
         error instanceof Error
@@ -144,7 +153,6 @@ const App = () => {
     window.localStorage.removeItem('accessToken')
     window.localStorage.removeItem('refreshToken')
     window.localStorage.removeItem('user')
-    setWidgetKey((key) => key + 1)
     setManualMessage(null)
   }
 
@@ -163,12 +171,12 @@ const App = () => {
             <Navigate to="/dashboard" replace />
           ) : (
             <LoginPage
-              widgetKey={widgetKey}
               manualId={manualId}
               onManualIdChange={setManualId}
               manualLoading={manualLoading}
               manualMessage={manualMessage}
               onManualLogin={handleLoginById}
+              onTelegramAuth={handleTelegramAuthFromButton}
             />
           )
         }

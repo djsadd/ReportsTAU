@@ -1,27 +1,19 @@
 import { useEffect } from 'react'
 import LoginPrompt from '../components/LoginPrompt'
-import { useTelegramWidget } from '../hooks/useTelegramWidget'
-import {
-  TELEGRAM_LOGIN,
-} from '../constants/config'
+import { TELEGRAM_LOGIN } from '../constants/config'
 import type { LoginPageProps } from '../types/auth'
 
 const LoginPage = ({
-  widgetKey,
   manualId,
   onManualIdChange,
   manualLoading,
   manualMessage,
   onManualLogin,
+  onTelegramAuth,
 }: LoginPageProps) => {
   useEffect(() => {
     console.log('[Telegram] TELEGRAM_LOGIN =', TELEGRAM_LOGIN)
   }, [])
-
-  const { widgetRef, ready: widgetReady } = useTelegramWidget({
-    login: TELEGRAM_LOGIN,
-    widgetKey,
-  })
 
   return (
     <div className="page">
@@ -35,8 +27,8 @@ const LoginPage = ({
         </div>
 
         <LoginPrompt
-          widgetRef={widgetRef}
-          ready={widgetReady && TELEGRAM_LOGIN.length > 0}
+          telegramBotName={TELEGRAM_LOGIN}
+          onTelegramAuth={onTelegramAuth}
           manualId={manualId}
           onManualIdChange={onManualIdChange}
           manualLoading={manualLoading}

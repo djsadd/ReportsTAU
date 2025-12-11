@@ -1,8 +1,9 @@
-import type { RefObject } from 'react'
+import TelegramLoginButton from 'react-telegram-login'
+import type { TelegramAuthPayload } from '../types/user'
 
 type LoginPromptProps = {
-  widgetRef: RefObject<HTMLDivElement | null>
-  ready: boolean
+  telegramBotName: string
+  onTelegramAuth: (payload: TelegramAuthPayload) => void
   manualId: string
   onManualIdChange: (value: string) => void
   manualLoading: boolean
@@ -11,8 +12,8 @@ type LoginPromptProps = {
 }
 
 export default function LoginPrompt({
-  widgetRef,
-  ready,
+  telegramBotName,
+  onTelegramAuth,
   manualId,
   onManualIdChange,
   manualLoading,
@@ -21,19 +22,18 @@ export default function LoginPrompt({
 }: LoginPromptProps) {
   return (
     <div className="panel-content">
-      <h2>Авторизация через Telegram</h2>
+      <h2>Вход через Telegram</h2>
       <p className="summary">
-        Пройдите авторизацию через виджет ниже или воспользуйтесь входом по ID.
+        Авторизуйтесь через Telegram или введите ваш Telegram ID вручную.
       </p>
-      <div
-        ref={widgetRef}
-        className={`telegram-widget${ready ? '' : ' loading'}`}
-        aria-live="polite"
-      >
-        {!ready && 'Загрузка виджета Telegram...'}
+      <div className="telegram-widget" aria-live="polite">
+        <TelegramLoginButton
+          botName={telegramBotName}
+          dataOnauth={onTelegramAuth}
+        />
       </div>
       <div className="manual-login">
-        <label htmlFor="manual-id-input">Telegram ID пользователя</label>
+        <label htmlFor="manual-id-input">Telegram ID (ручной вход)</label>
         <div className="manual-input-row">
           <input
             id="manual-id-input"
@@ -48,7 +48,7 @@ export default function LoginPrompt({
             onClick={onManualLogin}
             disabled={manualLoading}
           >
-            {manualLoading ? 'Проверка...' : 'Войти'}
+            {manualLoading ? 'Загрузка...' : 'Войти'}
           </button>
         </div>
         {manualMessage && <p className="manual-note">{manualMessage}</p>}
@@ -56,3 +56,4 @@ export default function LoginPrompt({
     </div>
   )
 }
+
