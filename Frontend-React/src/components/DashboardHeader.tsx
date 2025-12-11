@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { NavLink } from 'react-router-dom'
 
 type DashboardHeaderProps = {
@@ -12,6 +13,8 @@ const SECTIONS = [
 ] as const
 
 const DashboardHeader = ({ onLogout }: DashboardHeaderProps) => {
+  const [isMobileNavOpen, setIsMobileNavOpen] = useState(false)
+
   return (
     <header className="dashboard-header">
       <div className="dashboard-header-left">
@@ -19,7 +22,23 @@ const DashboardHeader = ({ onLogout }: DashboardHeaderProps) => {
           <span className="dashboard-logo-mark">TAU</span>
           <span className="dashboard-logo-sub">Reports</span>
         </div>
-        <nav className="dashboard-main-nav">
+        <button
+          type="button"
+          className={`dashboard-mobile-toggle${
+            isMobileNavOpen ? ' dashboard-mobile-toggle--open' : ''
+          }`}
+          onClick={() => setIsMobileNavOpen((prev) => !prev)}
+          aria-label="Переключить меню"
+        >
+          <span className="dashboard-mobile-toggle-line" />
+          <span className="dashboard-mobile-toggle-line" />
+          <span className="dashboard-mobile-toggle-line" />
+        </button>
+        <nav
+          className={`dashboard-main-nav${
+            isMobileNavOpen ? ' dashboard-main-nav--open' : ''
+          }`}
+        >
           {SECTIONS.map((section) => (
             <NavLink
               key={section.key}
@@ -50,4 +69,3 @@ const DashboardHeader = ({ onLogout }: DashboardHeaderProps) => {
 }
 
 export default DashboardHeader
-

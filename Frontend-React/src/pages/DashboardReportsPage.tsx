@@ -56,11 +56,11 @@ const DashboardReportsPage = () => {
       <div className="dashboard-main-card-header">
         <p className="dashboard-main-card-subtitle">Отчёты</p>
         <h2 className="dashboard-main-card-title">
-          Готовые отчёты по закрытым задачам
+          Рабочие отчёты, которые уже рассмотрены
         </h2>
         <p className="dashboard-main-card-text">
-          Здесь отображаются ваши рабочие логы (worklogs) со статусом
-          &quot;done&quot;.
+          Здесь показываются ваши рабочие записи (worklogs), которые помечены
+          как &quot;done&quot;.
         </p>
       </div>
 
@@ -68,19 +68,16 @@ const DashboardReportsPage = () => {
       {error && !loading && <p className="dashboard-error-text">{error}</p>}
 
       {!loading && !error && items.length === 0 && (
-        <p>Пока нет ни одного отчёта.</p>
+        <p>У вас ещё нет рассмотренных отчётов.</p>
       )}
 
       {!loading && !error && items.length > 0 && (
         <ul className="dashboard-list">
           {items.map((item) => (
             <li key={item.id}>
-              <div className="dashboard-list-title">
-                <span>{item.project || "Без проекта"}</span>
-                <span className="dashboard-list-date">
-                  {new Date(item.date).toLocaleDateString()}
-                </span>
-              </div>
+              <span className="dashboard-list-date">
+                {new Date(item.date).toLocaleDateString()}
+              </span>
               <div className="dashboard-list-description">
                 <strong>Описание:</strong> {item.description}
                 {item.llm_Description && (
@@ -102,3 +99,4 @@ const DashboardReportsPage = () => {
 }
 
 export default DashboardReportsPage
+
